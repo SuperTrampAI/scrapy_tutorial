@@ -1,0 +1,12 @@
+# 使用命令创建scrapy项目
+scrapy startproject tutorial
+
+# 使用如下命令在spiders中生成example.py 文件夹
+You can start your first spider with:
+    cd scrapy_tutorial
+    scrapy genspider example example.com
+
+Created spider 'example' using template 'basic' in module:
+  scrapy_tutorial.spiders.example
+
+可以中网站或一组网站中获取信息，必须继承spider。
