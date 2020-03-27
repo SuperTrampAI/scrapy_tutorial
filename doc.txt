@@ -1,3 +1,18 @@
+# 使用爬虫第一条：不做恶
+所以在使用爬虫时，设置每个请求之间的下载延迟，限制每个域或每个ip的并发请求数量。
+
+scrapy组成：
+使用css xpath 表达式从html、xml中提取数据，使用正则提筛选数据
+shell 控制台 ，使用css和xpath提取数据，可以用户调式spider
+支持都多种格式json，xml，csv生成并保存在到文件系统ftp，s3中。
+支持各种编码格式
+可以处理cookie和session
+http功能：压缩，身份验证，缓存
+用户代理
+robots.txt
+爬取深度限制
+
+
 # 使用命令创建scrapy项目
 scrapy startproject tutorial
 
@@ -9,4 +24,86 @@ You can start your first spider with:
 Created spider 'example' using template 'basic' in module:
   scrapy_tutorial.spiders.example
 
-可以中网站或一组网站中获取信息，必须继承spider。
+可以从网站或一组网站中获取信息，必须继承spider。
+
+关于scrapy目录说明：
+cfg文件所在目录为项目根目录，该文件包含定义项目设置的python模块的名称。
+一个cfg可以被多个scrapy项目共享。
+[settings]
+default = scrapy_tutorial.settings
+# project1=myproject1.settings
+# project2=myproject2.settings
+# 使用SCRAPY_PROJECT环境变量指定scrapy要使用的：
+# SCRAPY_PROJECT=projcts1
+scrapy.cfg
+myproject/
+    __init__.py
+    items.py
+    middlewares.py
+    pipelines.py
+    settings.py
+    spiders/
+        __init__.py
+        spider1.py
+        spider2.py
+        ...
+如上目录结构为标准的scrapy目录结构
+
+
+scrapy -h 查看全部命令
+全局命令：
+     startproject: scrapy startproject project_nme [project_dir]目录，如果project_dir 未指定，则与project_name 相同
+     genspider: scrapy genspider [-t template] <name> <domain>  ，如果在项目内部创调用，则在当前文件创建一个新的scrapy，<name>为scrapy的name，domain用于生产allowed_domains和start_urls的属性
+        实例：scrpay genspider -1
+        在项目内调用：scrapy genspider example example.com
+     settings: scrapy settings [options]
+
+     runspider: scrapy runspider <spider_file.py>
+        无需创建项目即可运行pf文件中的spider程序
+     shell: scrapy shell [url] 为给定的url启动shell，
+        参数：
+            --spider=SPIDER 强制使用特定spider
+            -c code 检测shell中的代码，打印结果并推出
+            --no-redirect  不遵循http3xx 重定向，默认情况下遵循http重定向
+     fetch : scrapy fetch <url> 从url下载内容 查看scrapy如何下载页面
+        参数：
+            --spider=SPIDER 强制使用特定spider
+            --headers 打印相应的http标头，而不是响应的body
+            --no-redirect 不遵循http3xx 重定向
+        实例：scrapy fetch --nolog url
+            scrapy fetch --nolog --headers url
+     view scrapy view <url>
+        查看spider返回的页面
+        参数：
+            --spider=SPIDER 强制使用特定spider
+            --no-redirect 不遵循http3xx 重定向
+         示例：
+            scrapy view url
+     version: scrapy version <-v> 打印scrapy版本
+
+项目命令：
+    craw1: 开始运行scrapy
+        实例：scrapy crawl myspider
+    check: 检查项目 scrapy check [-1] <spider>
+        实例：scrpay check -1
+    list :scrapy list 输出当前项目中所以可用的scrapy
+    edit
+    parse : scrapy parse <url> [options]
+    bench 运行基准测试
+
+还可以自定义命令
+
+关于spider：
+spider是定义如何爬取网站的py文件，即如何爬取，如何提取数据，
+过程
+You start by generating the initial Requests to crawl the first URLs, and specify a callback function to be called with the response downloaded from those requests.
+
+The first requests to perform are obtained by calling the start_requests() method which (by default) generates Request for the URLs specified in the start_urls and the parse method as callback function for the Requests.
+
+In the callback function, you parse the response (web page) and return either dicts with extracted data, Item objects, Request objects, or an iterable of these objects. Those Requests will also contain a callback (maybe the same) and will then be downloaded by Scrapy and then their response handled by the specified callback.
+
+In callback functions, you parse the page contents, typically using Selectors (but you can also use BeautifulSoup, lxml or whatever mechanism you prefer) and generate items with the parsed data.
+
+Finally, the items returned from the spider will be typically persisted to a database (in some Item Pipeline) or written to a file using Feed exports.
+
+通用spider
